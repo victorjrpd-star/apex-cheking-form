@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-in Diario | Apex Boxing</title>
+    <style>
+        :root {
+            --bg-color: #0b0b0b;
+            --card-bg: #141414;
+            --border-color: #262626;
+            --text-main: #f5f5f5;
+            --text-muted: #a3a3a3;
+            --accent: #ffffff;
+            --accent-hover: #e5e5e5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 4px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: var(--accent);
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .label-desc {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: -4px;
+            margin-bottom: 8px;
+            text-transform: none;
+        }
+
+        input[type="email"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            border-radius: 2px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+        }
+
+        .slider-container {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 2px;
+            text-align: center;
+        }
+
+        .slider-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: #ffffff;
+            cursor: pointer;
+            height: 6px;
+            background: #262626;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        #emojiDisplay {
+            font-size: 1.8rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .slider-value {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent);
+            color: #000000;
+            border: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Apex Boxing</h1>
+            <p>Check-in Diario</p>
+        </div>
+
+        <form id="checkinForm" onsubmit="enviarFormulario(event)">
+            
+            <div class="form-group">
+                <label for="email">Correo electrónico (Verificado)</label>
+                <input type="email" id="email" name="email" required 
+                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" 
+                       placeholder="tu.correo@gmail.com" 
+                       title="Introduce un correo electrónico válido (ejemplo: usuario@gmail.com)">
+            </div>
+
+            <div class="form-group">
+                <label for="enfoque">Enfoque de la clase</label>
+                <select id="enfoque" name="enfoque" required>
+                    <option value="" disabled selected>Selecciona una opción</option>
+                    <option value="técnica / sombra">Técnica / Sombra</option>
+                    <option value="acondicionamiento físico">Acondicionamiento físico</option>
+                    <option value="sparring">Sparring</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="rendimiento">Rendimiento del día (1 al 10)</label>
+                <input type="number" id="rendimiento" name="rendimiento" min="1" max="10" required placeholder="Ej. 8">
+            </div>
+
+            <div class="form-group">
+                <label for="rpe">RPE - Esfuerzo percibido (1 al 10)</label>
+                <input type="number" id="rpe" name="rpe" min="1" max="10" required placeholder="Ej. 7">
+            </div>
+
+            <div class="form-group">
+                <label for="soltura">Soltura y flexibilidad (1 al 10)</label>
+                <input type="number" id="soltura" name="soltura" min="1" max="10" required placeholder="Ej. 6">
+            </div>
+
+            <div class="form-group">
+                <label for="preguntacoach">Pregúntale a tu coach (Fluidez técnica)</label>
+                <div class="label-desc">1 = No me salen los ejercicios | 10 = Fluyo con los ejercicios</div>
+                <input type="number" id="preguntacoach" name="preguntacoach" min="1" max="10" required placeholder="Califica del 1 al 10">
+            </div>
+
+            <div class="form-group">
+                <label>¿Te divertiste? (Nivel de diversión)</label>
+                <div class="slider-container">
+                    <div class="slider-flex">
+                        <input type="range" id="divertiste" name="divertiste" min="1" max="10" value="10" oninput="actualizarEmoji(this.value)">
+                        <div id="emojiDisplay">🤩</div>
+                    </div>
+                    <div class="slider-value">Nivel: <span id="valDivertiste">10</span> / 10</div>
+                </div>
+            </div>
+
+            <button type="submit" id="btnEnviar">Enviar Registro</button>
+            <div id="loader" class="loader">Enviando y actualizando panel...</div>
+        </form>
+    </div>
+
+    <script>
+        function actualizarEmoji(valor) {
+            document.getElementById('valDivertiste').innerText = valor;
+            const emojiEl = document.getElementById('emojiDisplay');
+            
+            let v = parseInt(valor);
+            if (v <= 2) {
+                emojiEl.innerText = "😞";
+            } else if (v <= 4) {
+                emojiEl.innerText = "😐";
+            } else if (v <= 7) {
+                emojiEl.innerText = "🙂";
+            } else if (v <= 9) {
+                emojiEl.innerText = "😄";
+            } else {
+                emojiEl.innerText = "🤩";
+            }
+        }
+
+        const URL_LOOKER_STUDIO = "https://datastudio.google.com/reporting/27da793c-f229-434b-b21b-25fa39a57ace/page/bZKuF/edit";
+        const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbwEO9d2ua9RlnlIzdBV-Xnx5jcQjeghbyEKHQi8dRupoGIANBWHYYt1sYZ7WJv6LQuyMw/exec";
+
+        function enviarFormulario(event) {
+            event.preventDefault();
+            
+            const emailVal = document.getElementById('email').value.trim();
+            const regexEmail = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+            
+            if (!regexEmail.test(emailVal)) {
+                alert("Por favor, introduce un correo electrónico válido que contenga '@' y un dominio (ej. .com).");
+                document.getElementById('email').focus();
+                return;
+            }
+
+            document.getElementById('btnEnviar').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+
+            const datos = {
+                email: emailVal,
+                enfoque: document.getElementById('enfoque').value,
+                rendimiento: document.getElementById('rendimiento').value,
+                rpe: document.getElementById('rpe').value,
+                soltura: document.getElementById('soltura').value,
+                preguntacoach: document.getElementById('preguntacoach').value,
+                divertiste: document.getElementById('divertiste').value
+            };
+
+            fetch(URL_WEB_APP, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(() => {
+                window.location.href = URL_LOOKER_STUDIO;
+            })
+            .catch((error) => {
+                alert("Hubo un error al enviar el registro.");
+                document.getElementById('btnEnviar').style.display = 'block';
+                document.getElementById('loader').style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
